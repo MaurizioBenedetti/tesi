@@ -12,13 +12,12 @@ class Hotel(models.Model):
     hotel_name = models.CharField(max_length=150)
     hotel_description = models.CharField(max_length=150)
     hotel_email = models.CharField(max_length=100)
-    hotel_phone = models.CharField(max_length=100)
-    hotel_servizi = models.CharField(max_length=150)
+    hotel_phone = models.CharField(max_length=100)    
     hotel_address = models.CharField(max_length=150)
     hotel_rooms_number = models.IntegerField(default=0)
-    hotel_rooms_basic_price = models.IntegerField(default=0)
-    hotel_front_picture = models.CharField(max_length=150)
-    services = models.ManyToManyField(Service)
+    hotel_rooms_basic_price = models.IntegerField(default=100)
+    hotel_front_picture_url = models.CharField(max_length=150)
+    hotel_services = models.ManyToManyField(Service)
     def __str__(self):
         return self.hotel_name
 
