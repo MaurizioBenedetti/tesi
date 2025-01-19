@@ -27,7 +27,7 @@ class Hotel(models.Model):
 #al momento in cui l'utente salva la prenotazione, il sistema salva le informazioni necessarie per
 #potere onorare la prenozione. In particular il range temporale, l'utente e l'albergo
 class Reservation(models.Model):
-    stat_date = models.DateTimeField("date start")
+    start_date = models.DateTimeField("date start")
     end_date = models.DateTimeField("date end")
     comments = models.CharField(max_length=500)
     
@@ -40,3 +40,8 @@ class Reservation(models.Model):
     Hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
     #def __str__(self):
     #    return self.
+
+    @property
+    def start_date_string(self):
+        if self.stat_date:
+            return "%s..." % self.stat_date.strftime("%m/%d/%Y")
