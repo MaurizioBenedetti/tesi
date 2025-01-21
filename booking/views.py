@@ -6,6 +6,9 @@ from django.template import loader
 from django.shortcuts import redirect
 
 from .models import Hotel,Reservation,Service
+from django.contrib.auth import authenticate, login
+
+from django.contrib.auth import logout
 
 import logging
 import datetime
@@ -106,4 +109,32 @@ def booking_delete(request, booking_id):
     reservation = Reservation.objects.get(pk=booking_id)
     reservation.delete()
     return redirect(bookings)
-    
+
+
+def signin(request):
+    if request.method =='GET':
+        template = loader.get_template("booking/signin.html")        
+        return HttpResponse(template.render(None, request))
+    elif request.method == "POST":      
+        #TODO: metti un try and catch
+
+        username = request.POST["username"]
+        password = request.POST["password"]
+        
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            logger.error("Authenticated user %s", username)
+            login(request, user)
+            template = loader.get_template("booking/signin.html")        
+            return HttpResponse(template.render(None, request))
+        else:
+            logger.error("Authenticated failed for user %s", username)
+            template = loader.get_template("booking/signin.html")        
+            return HttpResponse(template.render(None, request))
+            
+        
+#metodo di servizio, implementa una semplice operazione di logout e redirezione alla
+#homepage del site. 
+def signout(request):
+    logout(request)    
+    return redirect(homepage)
