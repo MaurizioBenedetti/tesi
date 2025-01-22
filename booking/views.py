@@ -6,15 +6,22 @@ from django.template import loader
 from django.shortcuts import redirect
 
 from .models import Hotel,Reservation,Service
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
-from django.contrib.auth import logout
+
 
 import logging
 import datetime
+from django.http import Http404
 
 logger = logging.getLogger(__name__)
 
+
+
+
+#Vista di gestione della pagina iniziale, carica la lista degli hotels per supportare un carosello
+#nel corpo principale della pagina. La pagina e' un elemento base che non implementa nulla di speciale
+#nello specifico, utilizza la base e la estende 
 def homepage(request):
     hotel_list = Hotel.objects.all()
     template = loader.get_template("booking/index.html")
@@ -22,6 +29,10 @@ def homepage(request):
         "hotel_list": hotel_list,
     }
     return HttpResponse(template.render(context, request))
+
+
+
+
 
 def hotels(request):
     hotel_list = Hotel.objects.all()
@@ -34,43 +45,53 @@ def hotels(request):
 
 
 def booking_new(request):
-     #il metodo GET consiste nel renderizzare la pagina di una nuova prenotazione.
-     if request.method =='GET':
-        hotel_list = Hotel.objects.all()
-        template = loader.get_template("booking/booking.html")
-        context = {
-            "hotel_list": hotel_list,
-        }
-        return HttpResponse(template.render(context, request))
-     if request.method =='POST':
-        comments = request.POST["commenti"]
-        startDate = datetime.datetime.strptime(request.POST["datecheckin"], "%Y-%m-%d").date()
-        endDate = datetime.datetime.strptime(request.POST["datecheckout"], "%Y-%m-%d").date()
-        idHotel=request.POST["hotel_selezionato"]
-        #hotelSelected = request.POST["hotel_selezionato"]
-        #commenti = "FINO"
-        logger.error(comments)
-        hotel_list = Hotel.objects.all()
-        template = loader.get_template("booking/booking.html")
 
-        hotel_obj =  Hotel.objects.get(pk=idHotel)
+    #controllo se l'utente e' registrato, se non lo e', ovviamente lo forzo verso la login
+    if request.user.is_authenticated:
+        #il metodo GET consiste nel renderizzare la pagina di una nuova prenotazione.
+        if request.method =='GET':
+            hotel_list = Hotel.objects.all()
+            template = loader.get_template("booking/booking.html")
+            context = {
+                "hotel_list": hotel_list,
+            }
+            return HttpResponse(template.render(context, request))
+        if request.method =='POST':
+            comments = request.POST["commenti"]
+            startDate = datetime.datetime.strptime(request.POST["datecheckin"], "%Y-%m-%d").date()
+            endDate = datetime.datetime.strptime(request.POST["datecheckout"], "%Y-%m-%d").date()
+            idHotel=request.POST["hotel_selezionato"]
+            #hotelSelected = request.POST["hotel_selezionato"]
+            #commenti = "FINO"
+            logger.error(comments)
+            hotel_list = Hotel.objects.all()
+            template = loader.get_template("booking/booking.html")
 
-        diff = abs((endDate-startDate).days)
+            hotel_obj =  Hotel.objects.get(pk=idHotel)
 
-        reservationOBJ = Reservation(comments = comments,value=hotel_obj.hotel_rooms_basic_price * diff, user_id=1, Hotel=hotel_obj, start_date=startDate,end_date=endDate)
-        reservationOBJ.save()
-        #context = {
-        #    "hotel_list": hotel_list,
-        #}
-        #return HttpResponse(template.render(context, request))
-        return redirect(bookings)
+            diff = abs((endDate-startDate).days)
+
+            reservationOBJ = Reservation(comments = comments,value=hotel_obj.hotel_rooms_basic_price * diff, user_id=1, Hotel=hotel_obj, start_date=startDate,end_date=endDate, User =request.user)
+            reservationOBJ.save()
+            #context = {
+            #    "hotel_list": hotel_list,
+            #}
+            #return HttpResponse(template.render(context, request))
+            return redirect(bookings)
+    else:
+        return redirect(signin)        
+
+
 
 
 def booking_edit(request,booking_id):
     logger.error(booking_id)
 
     if request.method =='GET':
-        reservation = Reservation.objects.get(pk=booking_id)    
+        try:
+            reservation = Reservation.objects.get(pk=booking_id)    
+        except Reservation.DoesNotExist:
+            raise Http404("La prenotazione non esiste")
 
         hotel_list = Hotel.objects.all()
         template = loader.get_template("booking/booking.html")
@@ -81,28 +102,40 @@ def booking_edit(request,booking_id):
         return HttpResponse(template.render(context, request))
     if request.method =='POST':
 
-
-        logger.error("DAJE DE POST")
-        reservation = Reservation.objects.get(pk=booking_id)    
+        #la condizione in cui la prenotazione non esiste, in un utilizzo normale dovrebbe essere piuttosto difficile
+        #nell'happy path mi aspetto il frontend di impacchettare i campi della post correttamente. Ovvio che una POST
+        #frallocca posso impacchettarla in 5 secondi con una CURL a caso, meglio controllare ed intercettare 
+        #la condizione        
+        try:
+            reservation = Reservation.objects.get(pk=booking_id)    
+        except Reservation.DoesNotExist:
+            raise Http404("La prenotazione non esiste")
         
         comments = request.POST["commenti"]
         startDate = datetime.datetime.strptime(request.POST["datecheckin"], "%Y-%m-%d").date()
         endDate = datetime.datetime.strptime(request.POST["datecheckout"], "%Y-%m-%d").date()
 
+        #aggiorno i campi della richeista che ho trovato con l'id specificato, easy peasy
         reservation.comments = comments
         reservation.start_date = startDate
         reservation.end_date = endDate
+        
         reservation.save()
+
         return redirect(bookings)
         
 
 def bookings(request):
-    reservation_list = Reservation.objects.all()
-    template = loader.get_template("booking/prenotazioni.html")
-    context = {
-        "reservation_list": reservation_list,
-    }
-    return HttpResponse(template.render(context, request))
+     if request.user.is_authenticated:
+        #carico ovviamente solo le prenotazioni per l'utente autenticato
+        reservation_list = Reservation.objects.filter(User=request.user)
+        template = loader.get_template("booking/bookings.html")
+        context = {
+            "reservation_list": reservation_list,
+        }
+        return HttpResponse(template.render(context, request))
+     else:
+        return redirect(signin)    
 
 
 def booking_delete(request, booking_id):
@@ -112,6 +145,7 @@ def booking_delete(request, booking_id):
 
 
 def signin(request):
+    logger.error("Funzione Signin")
     if request.method =='GET':
         template = loader.get_template("booking/signin.html")        
         return HttpResponse(template.render(None, request))
@@ -125,8 +159,7 @@ def signin(request):
         if user is not None:
             logger.error("Authenticated user %s", username)
             login(request, user)
-            template = loader.get_template("booking/signin.html")        
-            return HttpResponse(template.render(None, request))
+            return redirect(homepage)
         else:
             logger.error("Authenticated failed for user %s", username)
             template = loader.get_template("booking/signin.html")        

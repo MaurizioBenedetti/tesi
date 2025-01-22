@@ -3,7 +3,7 @@ from django.db import models
 
 from django.conf import settings
 from datetime import date
-
+from django.contrib.auth.models import User
 
 
 
@@ -27,6 +27,10 @@ class Hotel(models.Model):
 
 
 
+        
+
+
+
 #Questo modello e' usato per rappresentare una reservation, una prenotazione.
 #al momento in cui l'utente salva la prenotazione, il sistema salva le informazioni necessarie per
 #potere onorare la prenozione. In particular il range temporale, l'utente e l'albergo
@@ -42,6 +46,8 @@ class Reservation(models.Model):
     value = models.IntegerField()
     user_id = models.IntegerField()
     Hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+    User = models.ForeignKey(User, on_delete=models.CASCADE)
+
     #def __str__(self):
     #    return self.
 
