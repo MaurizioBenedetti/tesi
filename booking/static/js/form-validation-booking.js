@@ -23,12 +23,11 @@
           return false    
         } else {
           dateStartField.classList.add("is-valid")
-          dateStartField.classList.remove("is-invalid")
-          return true    
+          dateStartField.classList.remove("is-invalid")              
         }
 
         const dateEndField = document.getElementById("datecheckout")                       
-        const dateEnd = new Date (dateStartField.value);
+        const dateEnd = new Date (dateEndField.value);
         if (dateEnd < dateStart) {
           dateEndField.classList.add("is-invalid")
           dateEndField.classList.remove("is-valid")

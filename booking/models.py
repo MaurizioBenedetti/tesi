@@ -24,7 +24,18 @@ class Hotel(models.Model):
     hotel_services = models.ManyToManyField(Service)
     def __str__(self):
         return self.hotel_name
-
+    
+    #definisco una utlity property per gestire centralmente la trim della strnga di descrizione.
+    #uniformare il contenuto nella pagine degli hotels lascia una sensazione di polish migliore
+    #ho preferito farlo qua per praticita', trovo molto piu naturale farlo in python che nella parte frontend 
+    #dei templates
+    @property
+    def get_hotel_description(self):
+        if self.hotel_description:
+            if(len(self.hotel_description) > 120):
+                return self.hotel_description[:120] + "..."
+            else:
+                return self.hotel_description
 
 
         
