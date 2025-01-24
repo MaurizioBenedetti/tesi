@@ -68,7 +68,7 @@ def booking_new(request):
 
             return HttpResponse(template.render(context, request))
         
-        #Controllo se mi trovo in una situazione di POST. in questo caso, sto salvando la prenotazione e procedo nella
+        #Controllo se mi trovo in una situazione di POST. in questo caso, sto salvando una nuova prenotazione e procedo nella
         #verifica dei valori
         if request.method =='POST':
             comments = request.POST["commenti"]
@@ -89,16 +89,16 @@ def booking_new(request):
 
             hotel_obj =  Hotel.objects.get(pk=idHotel)
 
-            diff = abs((endDate-startDate).days)
+            daysDifference = abs((endDate-startDate).days)
 
             #controllo anche qui una condizione che non dovrebbe verificarsi, ma se ricevo una POST forged
             #potrebbero passarmi due date non compatibili
-            if (diff <= 0):
+            if (daysDifference <= 0):
                 return HttpResponseBadRequest("Le date non sono compatibili.")
 
             reservationOBJ = Reservation()
             reservationOBJ.comments = comments
-            reservationOBJ.value = hotel_obj.hotel_rooms_basic_price * diff
+            reservationOBJ.value = hotel_obj.hotel_rooms_basic_price * daysDifference
 
             #TODO remove this
             reservationOBJ.user_id = 1
@@ -139,23 +139,32 @@ def booking_edit(request,booking_id):
         #frallocca posso impacchettarla in 5 secondi con una CURL a caso, meglio controllare ed intercettare 
         #la condizione        
         try:
-            reservation = Reservation.objects.get(pk=booking_id)    
+            reservationOBJ = Reservation.objects.get(pk=booking_id)    
         except Reservation.DoesNotExist:
             raise Http404("La prenotazione non esiste")
         
         comments = request.POST["commenti"]
-        startDate = datetime.datetime.strptime(request.POST["datecheckin"], "%Y-%m-%d").date()
-        endDate = datetime.datetime.strptime(request.POST["datecheckout"], "%Y-%m-%d").date()
-        
-        diff = abs((endDate-startDate).days)
+        #provo a convertire i campi in data. Ovviamente in caso di flow lineare, il frontend mi ha
+        #assicurato un input well formed. Non posso fidarmi nel backend, controllarlo e' sempre sensato
+        try:
+            startDate = datetime.datetime.strptime(request.POST["datecheckin"], "%Y-%m-%d").date()
+            endDate = datetime.datetime.strptime(request.POST["datecheckout"], "%Y-%m-%d").date()
+        except ValueError:
+            return HttpResponseBadRequest("Le date fornite sono malformate.")
+    
+        daysDifference = abs((endDate-startDate).days)
+        #controllo anche qui una condizione che non dovrebbe verificarsi, ma se ricevo una POST forged
+        #potrebbero passarmi due date non compatibili
+        if (daysDifference <= 0):
+            return HttpResponseBadRequest("Le date non sono compatibili.")
 
         #aggiorno i campi della richeista che ho trovato con l'id specificato, easy peasy
-        reservation.comments = comments
-        reservation.start_date = startDate
-        reservation.end_date = endDate
-        reservation.value = reservation.Hotel.hotel_rooms_basic_price * diff
+        reservationOBJ.comments = comments
+        reservationOBJ.start_date = startDate
+        reservationOBJ.end_date = endDate
+        reservationOBJ.value = reservation.Hotel.hotel_rooms_basic_price * daysDifference
         
-        reservation.save()
+        reservationOBJ.save()
 
         return redirect(bookings)
         
@@ -202,7 +211,7 @@ def signin(request):
             
         
 #metodo di servizio, implementa una semplice operazione di logout e redirezione alla
-#homepage del site. 
+#homepage del sito. 
 def signout(request):
     logout(request)    
     return redirect(homepage)

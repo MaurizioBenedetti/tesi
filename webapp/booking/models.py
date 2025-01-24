@@ -51,16 +51,17 @@ class Reservation(models.Model):
     comments = models.CharField(max_length=500)
     
     #salvo il valore della reservation in quanto potrebbe variare il prezzo della stanza nel tempo
-    #ed e' giusto mantenere il prezzo concordato al momento della reservation.
+    #ed e' giusto mantenere il prezzo concordato al momento della reservation. Avrei potuto anche calcolarlo in real time
     #inoltre, il sistema potrebbe essere evoluto per gestire special seasons events (per esempio black friday)
     #oppure coupons che si possono utilizzare per avere dei sconti
     value = models.IntegerField()
     user_id = models.IntegerField()
     Hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
-    User = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    #def __str__(self):
-    #    return self.
+    #TODO: Per una corretta evoluzione del progetto, una relazione diretta con lo user object di
+    # django.contrib.auth.models e' da evitarsi. Per praticita' di progetto ho proceduto in questo modo
+    #conscio del trade-off intrapreso
+    User = models.ForeignKey(User, on_delete=models.CASCADE)
 
     @property
     def start_date_string(self):

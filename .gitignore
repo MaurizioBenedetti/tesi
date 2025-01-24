@@ -1,0 +1,22 @@
+# Ignora le cache di Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ignora i file di log di Django (opzionale, se hai file di log)
+*.log
+
+
+# Ignora altri file e cartelle temporanee
+*.tmp
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Ignora i file di ambiente (se usi un file .env per le variabili)
+.env
+.envrc
+
+media/
+staticfiles/
