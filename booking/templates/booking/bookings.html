@@ -16,8 +16,7 @@
     <div class="album py-5 bg-light">
       <div class="container">  
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-          {% if reservation_list %}
-    
+          {% if reservation_list %}    
             {% for reservation in reservation_list %}
               <div class="col">
                 <div class="card shadow-sm">
@@ -42,13 +41,18 @@
                   </div>
                 </div>
               </div>
+            </div>
             {% endfor %}
           {% else %}
-            <p>No Reservations are available.</p>
+            </div>
+            <hr class="my-4">
+            <h3 class="fw-light">Ciao, in questo momento non hai prenotazioni attive. Vuoi crearne una nuova?</h1>
+            <hr class="my-4">
+            <a href="booking" class="w-100 btn btn-lg btn-primary" role="button">Crea una nuova prenotazione.</a>  
           {% endif %}
           
           
-        </div>
+        
       </div>
     </div>
 </main>

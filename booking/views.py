@@ -12,6 +12,8 @@ from django.contrib.auth import authenticate, login, logout
 import logging, datetime
 from django.http import Http404,HttpResponseBadRequest
 
+from django.contrib.auth.models import User
+
 logger = logging.getLogger(__name__)
 
 
@@ -183,8 +185,13 @@ def bookings(request):
 
 
 def booking_delete(request, booking_id):
-    reservation = Reservation.objects.get(pk=booking_id)
-    reservation.delete()
+
+    if request.user.is_authenticated:    
+        reservation = Reservation.objects.get(pk=booking_id)
+
+        if(reservation.User == request.user):            
+            reservation.delete()
+
     return redirect(bookings)
 
 
@@ -208,7 +215,37 @@ def signin(request):
             logger.error("Authenticated failed for user %s", username)
             template = loader.get_template("booking/signin.html")        
             return HttpResponse(template.render(None, request))
-            
+
+
+
+
+#Metodo che gestisce la registrazione di un nuovo utente. Ovviamente è un placeholder di qualcosa di molto
+#più complesso che normalmente viene implementato per un portale di produzione degno di questo nome.
+#nella funzione di gestione del POST, collezziona i campi e crea un utente usando il metodo standard 
+#create_user, che assicura anche la creazione dell'utente come utente attivo
+def signup(request):    
+    if request.method =='GET':
+        template = loader.get_template("booking/signup.html")        
+        return HttpResponse(template.render(None, request))
+    elif request.method == "POST":      
+        try:
+            username = request.POST["username"]
+            password = request.POST["password"]
+            nome = request.POST["nome"]
+            cognome = request.POST["cognome"]
+            email = request.POST["email"]
+        except:
+            #in caso di errore in questa fase, semplicement faccio schiantare l'utente sulla pagina
+            #standard di bad request.
+            return HttpResponseBadRequest("Gli input forniti non sono validi.")
+        
+        newUser = User.objects.create_user(username, email, password)                
+        newUser.first_name = nome
+        newUser.last_name = cognome        
+        newUser.save ()
+        
+        return redirect(signin)
+        
         
 #metodo di servizio, implementa una semplice operazione di logout e redirezione alla
 #homepage del sito. 
