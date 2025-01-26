@@ -1,0 +1,61 @@
+
+{% extends "booking/base.html" %}    
+{% load static %}
+{% block content %} 
+<main>
+
+    <section class="py-12 text-center container">
+      <div class="row py-lg-12">
+        <div class="col-lg-12 col-md-12 mx-auto">
+          <h1 class="fw-light">Prenotazioni in corso</h1>
+          <p class="lead text-muted">Di seguito le tue prenotazioni. Ricordati che puoi modificarle e cancellarle fino a 24 ore prima della data di checkin.</p>          
+        </div>
+      </div>
+    </section>
+  
+    <div class="album py-5 bg-light">
+      <div class="container">  
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+          {% if reservation_list %}    
+            {% for reservation in reservation_list %}
+              <div class="col">
+                <div class="card shadow-sm">
+                  
+                  
+                  <div class="card-body">
+                    <h5 class="card-title">{{ reservation.Hotel }}</h5>
+                    <p class="card-text">Check In: {{reservation.start_date|date:'d-m-Y'}}</p>
+                    <p class="card-text">Check Out: {{reservation.end_date|date:'d-m-Y'}}</p>
+                    <p class="card-text">Costo: {{reservation.value}}</p>
+                    <p class="card-text">Commenti: {{ reservation.comments}}</p>
+
+
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="btn-group">
+                        <a href="./booking/{{reservation.id}}/" class="btn btn-sm btn-outline-secondary" role="button">Modifica</a>
+                        <a href="./bookingdeletion/{{reservation.id}}/" class="btn btn-sm btn-outline-secondary" role="button">Elimina</a>                        
+                      </div>
+                      <small class="text-muted">9 mins</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            </div>
+            <hr class="my-4">
+            <h3 class="fw-light">Ciao, in questo momento non hai prenotazioni attive. Vuoi crearne una nuova?</h1>
+            <hr class="my-4">
+            <a href="booking" class="w-100 btn btn-lg btn-primary" role="button">Crea una nuova prenotazione.</a>  
+          {% endif %}
+          
+          
+        
+      </div>
+    </div>
+</main>
+
+
+{% endblock %}

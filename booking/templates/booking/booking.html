@@ -1,0 +1,101 @@
+{% extends "booking/base.html" %}    
+{% load static %}
+{% block content %} 
+
+<div class="container">
+  <main>
+    <div class="py-5 text-center">      
+      <h2>Prenotazione</h2>
+      <p class="lead">Siamo entusiasti di averti come nostro ospite presso le nostre strutture. Se hai problemi, non esitare a contattare il nostro servizio clienti allo 800 12 12 12</p>
+    </div>
+
+    <div class="row g-5">      
+      <div class="col-md-12 col-lg-12">
+        <h4 class="mb-3">Informazioni di prenotazione</h4>
+        <form class="needs-validation" novalidate method="POST">
+          {% csrf_token %}
+          <div class="row g-3">
+            {% if reservation == None %}
+              <div class="col-12">
+                <label for="Albergo" class="form-label">Hotel</label>
+                <select class="form-select" id="hotel" name="hotel_selezionato" required>
+                  <option value="">Seleziona un albergo...</option>                
+                  {% if hotel_list %}    
+                    {% for hotel in hotel_list %}
+                        {% if hotel_initially_selected %}
+                          {% if hotel.id == hotel_initially_selected%}
+                            <option selected value={{hotel.id}}>{{ hotel.hotel_name }}</option>                
+                          {% else %}                          
+                            <option value={{hotel.id}}>{{hotel.hotel_name}}</option>                
+                          {% endif %}
+                        {% else %}        
+                          <option value={{hotel.id}}>{{hotel.hotel_name}}</option>                
+                        {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    <option>No hotels are available.</option>
+                  {% endif %}
+            {% else %}
+              <div class="col-12">
+                <label for="Hotel" class="form-label">Hotel</label>
+                <input type="text" class="form-control" id="hotel" name= "hotel" value="{% if reservation %}{{reservation.Hotel.hotel_name}}{% endif %}" placeholder="Inserisci qui i tuoi commenti aggiuntivi per la prenotazione." disabled="disabled">              
+              </div>              
+            {% endif%}
+
+
+                </select>
+                <div class="invalid-feedback">
+                  Per cortesia, seleziona un albergo valido.
+                </div>
+              </div>
+
+            
+            <div class="col-12">
+              <label for="Date Start" class="form-label">Data di arrivo: <span class="text-muted"></span></label>              
+              <input class="form-control" type="date" id="datecheckin" name="datecheckin" value="{% if reservation %}{{reservation.start_date|date:'Y-m-d'}}{% endif %}" required>              
+              <div class="invalid-feedback">
+                Per cortesia, specifica una data di inizio, che non sia nel passato, per il tuo soggiorno
+              </div>
+            </div>
+            <div class="col-12">
+              <label for="Date End" class="form-label">Data di partenza: <span class="text-muted"></span></label>
+              <input class="form-control" type="date" id="datecheckout" name="datecheckout" value="{% if reservation %}{{reservation.end_date|date:'Y-m-d'}}{% endif %}" required>           
+
+
+              <div class="invalid-feedback">
+                Per cortesia, specifica una data di fine valida per il tuo soggiorno
+              </div>
+            </div>
+            <div class="col-12">
+              <label for="comments" class="form-label">Commenti</label>
+              <input type="text" class="form-control" id="commenti" name= "commenti" value="{% if reservation %}{{reservation.comments}}{% endif %}" placeholder="Inserisci qui i tuoi commenti aggiuntivi per la prenotazione." required>              
+            </div>           
+
+          <hr class="my-4">
+
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="same-address">
+            <label class="form-check-label" for="same-address">Accetto i termini e le condizioni di prenotazione.</label>
+          </div>
+
+                    
+
+          <hr class="my-4">
+          {% if reservation == None %}
+            <button class="w-100 btn btn-primary btn-lg" type="submit" value="book">Conferma la prenotazione</button>
+          {% else %}
+            <button class="w-100 btn btn-primary btn-lg" type="submit" value="book">Aggiorna la prenotazione</button>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="{% static 'js/form-validation-booking.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+

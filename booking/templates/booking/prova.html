@@ -1,0 +1,9 @@
+{% if hotel_list %}
+    <ul>
+    {% for hotel in hotel_list %}
+        <li><a href="/hotels/{{ hotel.id }}/">{{ hotel.hotel_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hotels are available.</p>
+{% endif %}

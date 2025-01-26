@@ -1,0 +1,42 @@
+{% extends "booking/base.html" %}    
+{% load static %}
+{% block content %} 
+
+<link href="{% static 'css/signin.css'%}" rel="stylesheet">    
+<div class="col-12"> 
+  
+<main class="form-signin w-100 m-auto">
+  <form method="POST">
+    {% csrf_token %}   
+    
+    <h1 class="h3 mb-3 fw-normal">Per favore, autenticati</h1>
+
+    
+      <input type="username" class="form-control" id="floatingInput" name="username" placeholder="" required>
+      <label for="floatingInput">Username</label>    
+      
+      <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password" required>
+      <label for="floatingPassword">Password</label>
+    
+    
+    
+
+
+    <div class="checkbox mb-3">
+      <label>
+        <input type="checkbox" value="remember-me"> Remember me
+      </label>
+    </div>
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Entra</button>    
+    <hr class="my-4">
+    <a href="signup" class="w-100 btn btn-lg btn-primary" role="button">Registrati</a>
+
+  </form>
+
+
+
+</main>
+</div>
+
+<br>
+{% endblock %}

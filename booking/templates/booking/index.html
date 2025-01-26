@@ -1,0 +1,101 @@
+{% extends "booking/base.html" %}    
+{% load static %}
+{% block content %} 
+
+<!-- Sezione del carosello con i vari alberghi presenti nella catena pegaso. Questa sezione viene caricata dinamicamente dalla collezione di hotel dal backend -->
+<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">  
+    <div class="carousel-indicators">
+    {% if hotel_list %}    
+        {% for hotel in hotel_list %}
+            <!--Notare l'inner counter forloop.counte0 utilizzato per numerare le slide nel loop -->      
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="{{forloop.counter0}}" class="active" aria-current="true" aria-label="{{ hotel.hotel_name }}"></button>
+        {% endfor %}
+    {% else %}
+        <p>Non ci sono alberghi registrati in questo momento. Ci scusiamo per il disagio</p>
+    {% endif %}    
+    
+  </div>
+  <div class="carousel-inner">
+    {% if hotel_list %}    
+        {% for hotel in hotel_list %}
+            {%if forloop.counter0 == 0%}
+                <div class="carousel-item active">
+            {% else %}
+                <div class="carousel-item">
+            {% endif %}                                
+            <img class="d-block w-100" src="{% static '/'%}{{hotel.hotel_front_picture_url}}" alt="{{ hotel.hotel_name }}">
+            <div class="carousel-caption d-none d-md-block">
+                <h1>{{hotel.hotel_name}}</h1>
+                <p>{{hotel.hotel_description}}</p>
+              </div>
+            
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No hotels are available.</p>
+    {% endif %}    
+    
+    
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+
+
+
+
+  <!-- Marketing messaging and featurettes
+  ================================================== -->
+  <!-- Wrap the rest of the page in another container to center all the content. -->
+
+  <div class="container marketing">
+    <hr class="featurette-divider">
+    <div class="row featurette">
+      <div class="col-md-7">
+        <h2 class="featurette-heading fw-normal lh-1">Cordialità e professionalità al tuo servizio. <span class="text-muted">Ti sorprenderemo.</span></h2>
+        <p class="lead">La Pegaso Hotels opera da anni nel mercato ricettivo alberghiero. Abbiamo vinto per 4 anni consecutivi il premio di miglior customer care per alberghi 4 e 5 stelle del centro italia. Vieni a farti coccolare in una delle nostre strutture ricettive.</p>
+      </div>
+      <div class="col-md-5">
+        <img class="card-img-top" src="{% static '/img/hospitality.jpg'%}" width="500" height="500"/>
+
+      </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="row featurette">
+      <div class="col-md-7 order-md-2">
+        <h2 class="featurette-heading fw-normal lh-1">Non sei sicuro riuscirai a partire? <span class="text-muted">Possiamo stupirti.</span></h2>
+        <p class="lead">Su tutte le prenotazioni è inclusa la clausola di cancellazione gratuita entro le 24 ore prima della partenza. Applicando nella prenotazione la clausola assicurativa, al corto di 5 euro aggiuntivi, sarà possibile cancellare la prenotazione in qualsiasi momento.</p>
+      </div>
+      <div class="col-md-5 order-md-1">
+        <img class="card-img-top" src="{% static '/img/unplanned.jpg'%}" width="500" height="500"/>
+      </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="row featurette">
+      <div class="col-md-7">
+        <h2 class="featurette-heading fw-normal lh-1">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
+        <p class="lead">And yes, this is the last block of representative placeholder content. Again, not really intended to be actually read, simply here to give you a better view of what this would look like with some actual content. Your content.</p>
+      </div>
+      <div class="col-md-5">
+        <svg class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#eee"/><text x="50%" y="50%" fill="#aaa" dy=".3em">500x500</text></svg>
+
+      </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <!-- /END THE FEATURETTES -->
+
+  </div><!-- /.container -->
+{% endblock %}

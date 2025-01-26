@@ -1,0 +1,43 @@
+{% extends "booking/base.html" %}    
+{% load static %}
+{% block content %} 
+
+<link href="{% static 'css/signin.css'%}" rel="stylesheet">    
+<div class="col-12"> 
+  
+<main class="form-signin w-100 m-auto">
+  <form class="needs-validation" validate method="POST">
+    {% csrf_token %}   
+    
+    <h1 class="h3 mb-3 fw-normal">Piacere di conoscerti, dicci qualcosa di te.</h1>    
+
+    <div class="col-12">
+      <label for="Username" class="form-label">Username</label>
+      <input type="text" class="form-control" id="username" name= "username" value="" placeholder="Scegli un nome utente" required>              
+    </div> 
+    <div class="col-12">
+      <label for="Nome" class="form-label">Nome</label>
+      <input type="text" class="form-control" id="nome" name= "nome" value="" placeholder="Quale è il tuo nome?" required>              
+    </div> 
+
+    <div class="col-12">
+      <label for="Nome" class="form-label">Cognome</label>
+      <input type="text" class="form-control" id="cognome" name= "cognome" value="" placeholder="Il tuo cognome per favore" required>              
+    </div> 
+    <div class="col-12">
+      <label for="Nome" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" name= "email" value="" placeholder="" required>              
+    </div> 
+
+    <div class="col-12">
+      <label for="Nome" class="form-label">Password</label>
+      <input type="password" class="form-control" id="password" name= "password" value="" placeholder="" required>              
+    </div> 
+    
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Conferma Registrazione</button>    
+  </form>
+</main>
+</div>
+
+<br>
+{% endblock %}
