@@ -121,30 +121,41 @@ def booking_edit(request,booking_id):
 
     logger.error(booking_id)
 
-    if request.method =='GET':
-        try:
-            reservation = Reservation.objects.get(pk=booking_id)    
-        except Reservation.DoesNotExist:
-            raise Http404("La prenotazione non esiste")
+    #se non autenticato, no game
+    if (not request.user.is_authenticated):
+        return redirect(bookings)
 
+
+    #prendo l'istanza della prenotazione, operazione comune sia se sono in GET che in POST
+    try:
+        reservationOBJ = Reservation.objects.get(pk=booking_id)    
+    except Reservation.DoesNotExist:
+        raise Http404("La prenotazione non esiste")
+    
+    #se la prenotazione non e' di propieta' dell'utente loggato, faccio finire la partita
+    #loggo un evento nel log e torno alla pagina delle prenotazioni.
+    if(reservationOBJ.User != request.user):     
+        logger.error("Evento anomalo, ricevuta richiesta di modifica/cancellazione prenotazione da utente non propietario.")
+        logger.error("Utente %s Prenotazione %s",request.user, reservationOBJ)
+        return redirect(bookings)
+
+
+    #Se sono qui:
+    #   - utente loggato
+    #   - prenotazione trovata
+    #   - prenotazione appartiene all'utente loggato
+    # 
+    # posso procedere
+    if request.method =='GET':
         hotel_list = Hotel.objects.all()
         template = loader.get_template("booking/booking.html")
         context = {
             "hotel_list": hotel_list,
-            "reservation": reservation,
+            "reservation": reservationOBJ,
         }
         return HttpResponse(template.render(context, request))
     if request.method =='POST':
 
-        #la condizione in cui la prenotazione non esiste, in un utilizzo normale dovrebbe essere piuttosto difficile
-        #nell'happy path mi aspetto il frontend di impacchettare i campi della post correttamente. Ovvio che una POST
-        #frallocca posso impacchettarla in 5 secondi con una CURL a caso, meglio controllare ed intercettare 
-        #la condizione        
-        try:
-            reservationOBJ = Reservation.objects.get(pk=booking_id)    
-        except Reservation.DoesNotExist:
-            raise Http404("La prenotazione non esiste")
-        
         comments = request.POST["commenti"]
         #provo a convertire i campi in data. Ovviamente in caso di flow lineare, il frontend mi ha
         #assicurato un input well formed. Non posso fidarmi nel backend, controllarlo e' sempre sensato
@@ -164,8 +175,7 @@ def booking_edit(request,booking_id):
         reservationOBJ.comments = comments
         reservationOBJ.start_date = startDate
         reservationOBJ.end_date = endDate
-        reservationOBJ.value = reservation.Hotel.hotel_rooms_basic_price * daysDifference
-        
+        reservationOBJ.value = reservationOBJ.Hotel.hotel_rooms_basic_price * daysDifference        
         reservationOBJ.save()
 
         return redirect(bookings)
@@ -184,11 +194,15 @@ def bookings(request):
         return redirect(signin)    
 
 
+
+
+#metodo di cancellazione di una richeista. Implementa molti pochi controlli vista la logica 
+#molto base della soluzione. Controlla se l'utente e' il propietario della prenotazione, altrimenti
+#giocando con la querystring si poteva banalmente abusare.
 def booking_delete(request, booking_id):
 
     if request.user.is_authenticated:    
         reservation = Reservation.objects.get(pk=booking_id)
-
         if(reservation.User == request.user):            
             reservation.delete()
 

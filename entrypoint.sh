@@ -12,7 +12,7 @@ python manage.py migrate
 python manage.py createsuperuser --noinput --username=admin
 
 
-CONTAINER_ALREADY_STARTED="FLAG_SET_ex"
+CONTAINER_ALREADY_STARTED="FLAG_SETEXECUTED"
 if [ ! -e $CONTAINER_ALREADY_STARTED ]; then
     touch $CONTAINER_ALREADY_STARTED
     echo "-- First container startup --"
@@ -20,7 +20,5 @@ if [ ! -e $CONTAINER_ALREADY_STARTED ]; then
 else
     echo "-- Not first container startup --"
 fi
-
-
 
 exec "$@"

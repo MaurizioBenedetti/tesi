@@ -30,6 +30,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 #ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
+CSRF_TRUSTED_ORIGINS = ['http://*.127.0.0.1', 'http://127.0.0.1:1337']
+
 
 # Application definition
 
@@ -80,11 +82,11 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        'NAME': 'booking', # database name
-        'USER': 'booking_backend',
-        'PASSWORD': 'GuessIt123',
-        'HOST': 'db',
-        'PORT': '5432',
+        'NAME': os.environ.get("SQL_DATABASE","booking"), # database name
+        "USER": os.environ.get("SQL_USER", "booking_backend"), # username to be used
+        'PASSWORD': os.environ.get("SQL_PASSWORD", "GuessIt123"),
+        "HOST": os.environ.get("SQL_HOST", "127.0.0.1"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),        
     }
 }
 

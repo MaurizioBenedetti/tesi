@@ -17,7 +17,7 @@ version: '3.8'
 services:
   web:
     build: ./    
-    command: gunicorn mysite.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn mysite.wsgi:application --bind 0.0.0.0:8000 --log-level 'debug'
     volumes:
       - static_volume:/home/app/web/staticfiles      
     expose:
@@ -31,10 +31,8 @@ services:
       - pegaso_postgres_data:/var/lib/postgresql/data/
     ports:
       - 5432:5432
-    environment:
-      - POSTGRES_USER=booking_backend
-      - POSTGRES_PASSWORD=GuessIt123
-      - POSTGRES_DB=booking
+    env_file:
+      - ./.env.dev
 
   nginx:
     build: ./nginx

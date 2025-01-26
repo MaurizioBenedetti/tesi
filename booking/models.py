@@ -63,6 +63,9 @@ class Reservation(models.Model):
     #conscio del trade-off intrapreso
     User = models.ForeignKey(User, on_delete=models.CASCADE)
 
+
+
+
     @property
     def start_date_string(self):
         if self.stat_date:
