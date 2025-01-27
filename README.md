@@ -21,4 +21,9 @@ Prima di eseguire la build, vale la pena customizzare il file .env presente nell
 
 La soluzione non prevede al momento la configurazione di una terminazione SSL, espone su porta 1337 HTTP non cifrato.
 
+Al completamento della build, 3 containers verranno creati con nomi parlanti come _nginx _web e _db.
+
+
+
+
 
