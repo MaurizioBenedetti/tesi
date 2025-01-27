@@ -1,4 +1,4 @@
-#Introduzione
+# Introduzione
 Questo repository riguarda il project work per l'anno accademico 2024-2025 della matricola 0312300041, traccia 1.4.
 
 Il codice presentato si prefigge di gestire un ipotetica catena di alberghi ed offre funzionalità base per la gestione delle prenotazioni quali creazione, visualizzazione, modifica e cancellazione.
@@ -11,7 +11,7 @@ Il progetto e' basato su di uno stack Django e presenta la recipe docker per imp
 
 
 
-#Come procedere con la build
+# Come procedere con la build
 
 Per eseguire la build della soluzione basta girare il docker compose con il seguente comando:
 
