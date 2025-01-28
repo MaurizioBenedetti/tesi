@@ -12,6 +12,10 @@ class Service(models.Model):
     def __str__(self):
         return self.service_name
 
+
+
+#modello dell'entita' che contiene le informazioni relative ad un Hotel. Il modello e' davvero base, contiene
+#una manciata di attributi che permettono di identificare un albergo. 
 class Hotel(models.Model):
     hotel_name = models.CharField(max_length=150)
     hotel_description = models.CharField(max_length=150)
