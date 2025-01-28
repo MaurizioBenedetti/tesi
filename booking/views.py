@@ -116,11 +116,10 @@ def booking_new(request):
 
 
 
-
+#Metodo di editing di una prenotazione, gestisce sia la GET (fornire il payload alla pagina HTML con i dettagli) 
+#che il POST (salvare l'editing). Ovviamente verifica l'autenticazion e se il propietario della prenotazione
+#e' l'utente corrente
 def booking_edit(request,booking_id):
-
-    logger.error(booking_id)
-
     #se non autenticato, no game
     if (not request.user.is_authenticated):
         return redirect(bookings)
@@ -181,6 +180,9 @@ def booking_edit(request,booking_id):
         return redirect(bookings)
         
 
+
+#metodo di listing delle prenotazioni. Effettua un filtro blando sulle prenotazioni effettuate
+#per l'utente corrente presente nella richiesta e renderizza sulla pagina predisposta per le schede
 def bookings(request):
      if request.user.is_authenticated:
         #carico ovviamente solo le prenotazioni per l'utente autenticato
@@ -209,6 +211,8 @@ def booking_delete(request, booking_id):
     return redirect(bookings)
 
 
+#Funzione di signin. Gestisce GET (fornire la pagina) e POST (provare ad autenticarsi)
+#se l'autenticazione non funziona, logga un evento e riporta alla pagina di login di nuovo
 def signin(request):
     logger.error("Funzione Signin")
     if request.method =='GET':
