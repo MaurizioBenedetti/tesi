@@ -84,8 +84,7 @@ def booking_new(request):
             except ValueError:
                 return HttpResponseBadRequest("Le date fornite sono malformate.")
             
-            idHotel=request.POST["hotel_selezionato"]            
-            logger.error(comments)
+            idHotel=request.POST["hotel_selezionato"]                        
             hotel_list = Hotel.objects.all()
             template = loader.get_template("booking/booking.html")
 
@@ -213,8 +212,7 @@ def booking_delete(request, booking_id):
 
 #Funzione di signin. Gestisce GET (fornire la pagina) e POST (provare ad autenticarsi)
 #se l'autenticazione non funziona, logga un evento e riporta alla pagina di login di nuovo
-def signin(request):
-    logger.error("Funzione Signin")
+def signin(request):    
     if request.method =='GET':
         template = loader.get_template("booking/signin.html")        
         return HttpResponse(template.render(None, request))
