@@ -1,0 +1,402 @@
+openapi: 3.1.0
+info:
+  title: Swagger Pegaso Hotels - OpenAPI 3.1
+  description: |-
+    This is the swagger file for the Pegaso Hotel project work for unipegaso.
+
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://pegaso-hotels.com/api/v3
+tags:
+  - name: booking
+    description: Everything about reservation management
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  
+paths:
+  /booking:
+    put:
+      tags:
+        - booking
+      summary: Update an existing booking entry.
+      description: Update an existing booking by Id
+      operationId: updateBooking
+      requestBody:
+        description: Update an existent booking in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Booking'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Booking'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Booking not found
+        '422':
+          description: Validation exception
+      security:
+        - bookings_auth:
+            - write:bookings
+            - read:bookings
+    post:
+      tags:
+        - booking
+      summary: Add a new booking for a custom for a hotel
+      description: this endpoint enables the creation of a new booking
+      operationId: addBooking
+      requestBody:
+        description: Create a new booking
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Booking'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Booking'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+      security:
+        - bookings_auth:
+            - write:bookings
+            - read:bookings
+   
+  /booking/{bookingID}:
+    get:
+      tags:
+        - booking
+      summary: Find a booking reservation by ID
+      description: Returns a single reservation
+      operationId: getBookingByID
+      parameters:
+        - name: bookingID
+          in: path
+          description: ID of the reservation to be returned
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Reservation not found
+      security:
+        - api_key: []
+        - bookings_auth:
+            - write:bookings
+            - read:bookings
+    
+    delete:
+      tags:
+        - booking
+      summary: Deletes a booking
+      description: delete a booking
+      operationId: deleteBooking
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: bookingID
+          in: path
+          description: Pet id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid pet value
+      security:
+        - bookings_auth:
+            - write:bookings
+            - read:bookings
+
+  
+  /hotel:
+    put:
+      tags:
+        - hotel
+      summary: Update an existing hotel.
+      description: This endpoint is used to update an existing hotel in the catalog
+      operationId: updateHotel
+      requestBody:
+        description: Update a hotel
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Hotel'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Hotel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Hotel'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hotel'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Hotel'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Hotel not found
+        '422':
+          description: Validation exception
+      security:
+        - pegasoHotels_auth:
+            - write:hotels
+            - read:hotels
+    post:
+      tags:
+        - hotel
+      summary: Add a new hotel in the hotel catalog
+      description: this endpoint enables the creation of a new hotel
+      operationId: addHotel
+      requestBody:
+        description: Create a new Hotel
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Hotel'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Hotel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Hotel'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hotel'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Hotel'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+      security:
+        - pegasoHotels_auth:
+            - write:hotels
+            - read:hotels
+   
+  /hotel/{hotelID}:
+    get:
+      tags:
+        - hotel
+      summary: Find a hotel by ID
+      description: Returns a single hotel payload
+      operationId: getHotelByID
+      parameters:
+        - name: hotelID
+          in: path
+          description: ID of the hotel to be returned
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hotel'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Hotel'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Reservation not found
+      security:
+        - api_key: []
+        - pegasoHotels_auth:
+            - write:hotels
+            - read:hotels
+    
+    delete:
+      tags:
+        - hotel
+      summary: Deletes a hotel
+      description: delete a hotel
+      operationId: deleteHotel
+      parameters:       
+        - name: hotelID
+          in: path
+          description: hotel ID to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid hotel ID value
+      security:
+        - pegasoHotels_auth:
+            - write:hotels
+            - read:hotels
+  
+components:
+  schemas:    
+    Booking:
+      required:
+        - id
+        - startDate
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          examples: [10]
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time  
+        comments:
+          type: string          
+          maxLength: 500
+          examples: [questa informazione e' aggiuntiva alla prenotazione]                
+        value:
+          type: integer
+          format: int64
+          examples: [1000]
+        userID:
+          type: integer
+          format: int64
+          examples: [101]
+        hotelID:
+          type: integer
+          format: int64
+          examples: [1000]        
+    Hotel:
+      required:
+        - id
+        - hotelName
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          examples: [10]
+        hotelName:
+          type: string  
+          maxLength: 150        
+        hotelDescription:
+          type: string
+          maxLength: 500          
+        hotelEmail:
+          type: string          
+          maxLength: 100          
+        hotelPhone:
+          type: string          
+          maxLength: 100          
+        hotelAddress:
+          type: string          
+          maxLength: 150          
+        hotelRoomNumber:
+          type: integer
+          format: int64
+          examples: [200]    
+        hotelRoomBasicPrice:
+          type: integer
+          format: int64
+          examples: [200]  
+        hotelFrontPicture:
+          type: string          
+          maxLength: 150         
+        hotelServices:
+          type: array
+          items:
+            type: integer
+            
+
+      
+    
+  securitySchemes:
+    pegasoHotels_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:hotels: modify hotels
+            read:hotels: read hotels
+    bookings_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:bookings: modify bookings
+            read:bookings: read bookings
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
